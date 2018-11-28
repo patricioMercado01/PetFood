@@ -1,20 +1,37 @@
 import sys, Ice
-import motorStep
+#import motorStep
 import time
+print "import Time ready"
+import WeightSensor
+print "import WeightSensor ready"
 
-class MotorStep():
+class SensorControlI(PetFoodSensors.SensorControl):
 	def motorTime(time):
-        	motorStep.on(time)
-	#def motorTime()
-	#	void motorTime(string time);
-          #      	void givefood(int weight);
-	 #               int getContainerFood();
-        #	        int foodEated();
-	#               bool eatingNow();
+		#motorStep.move(time)
+		print "motTim"
+		
+	def givefood(weight):
+		#motorStep.foodWeight(weight)
+		print "gFood"
+		
+	def getContainerFood():#podria no necesitarse
+		return 1
+		
+	def getFoodEated():#podria no necesitarse
+		return 1
+		
+	def eatingNow():
+		if True and  WeightSensor.variationInWeight():
+			return True
+		else:
+			return False
+			
+	def getWeight():
+		WeightSensor.getWeightNow()
 
 with Ice.initialize(sys.argv) as communicator:
-    adapter = communicator.createObjectAdapterWithEndpoints("MotorTimeAdapter", "default -h 192.168.43.152 -p 10000")
-    object = MotorStep()
-    adapter.add(object, communicator.stringToIdentity("MotorTime"))
-    adapter.activate()
-    communicator.waitForShutdown()
+	servant = SensorControl()
+	adapter = communicator.createObjectAdapterWithEndpoints("SensorControlAdapter", "default -h 192.168.101.46 -p 10000")
+	adapter.add(servant, communicator.stringToIdentity("SensorControl"))
+	adapter.activate()
+	communicator.waitForShutdown()
